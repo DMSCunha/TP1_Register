@@ -21,18 +21,22 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
     //Devolve: Address -> IP e porto
     @Override
     public void getIP(Void request, StreamObserver<Address> responseObserver) {
+
+        //sincronizar aqui
+        /************************************/
+
         //obter o endereço do próximo servidor a enviar
         ServerAddress serverAddress = server.getNextServer();
 
-        //construir a resposta
-        Address address = Address.newBuilder()
-                .setIp(serverAddress.getIp())
-                .setPort(serverAddress.getPort())
-                .build();
+        /**********************************/
+
+        if(serverAddress == null){
+            responseObserver.onError(new Throwable("Sorry, no service servers ON, try again later..."));
+            return ;
+        }
 
         //enviar a resposta
-        responseObserver.onNext(address);
-        responseObserver.onCompleted();
+        sendIpPort(responseObserver, serverAddress.getIp(), serverAddress.getPort());
     }
 
     //case 1
@@ -43,16 +47,33 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
     @Override
     public void errorGetAnotherIP(Address request, StreamObserver<Address> responseObserver) {
 
-        ServerAddress serverError = new ServerAddress(request.getIp(), request.getPort());
+        //sincronizar aqui
+        /************************************/
 
+        //guardar ip e porto recebido
+        ///tratar do server com erro
+        server.errorOnServer(new ServerAddress(request.getIp(), request.getPort()));
 
         //obter outro endereço de um servidor
         ServerAddress serverAddress = server.getNextServer();
 
+        /************************************/
+
+
+        if(serverAddress == null){
+            responseObserver.onError(new Throwable("Sorry, no service servers ON, try again later..."));
+            return ;
+        }
+
+        //enviar a resposta
+        sendIpPort(responseObserver, serverAddress.getIp(), serverAddress.getPort());
+    }
+
+    private void sendIpPort(StreamObserver<Address> responseObserver, String ip, int port){
         //construir a resposta
         Address address = Address.newBuilder()
-                .setIp(serverAddress.getIp())
-                .setPort(serverAddress.getPort())
+                .setIp(ip)
+                .setPort(port)
                 .build();
 
         //enviar a resposta

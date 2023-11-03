@@ -13,7 +13,13 @@ public class ServiceContract extends RegisterServiceGrpc.RegisterServiceImplBase
     //Devolve: Ack -> bool
     @Override
     public void connect(Address request, StreamObserver<Ack> responseObserver) {
-        super.connect(request, responseObserver);
+
+        //sincronizar aqui
+        /************************************/
+
+
+        /************************************/
+
     }
 
     //case 1
@@ -21,7 +27,11 @@ public class ServiceContract extends RegisterServiceGrpc.RegisterServiceImplBase
     //Retorna um bool
     @Override
     public void isAlive(Void request, StreamObserver<Status> responseObserver) {
-        super.isAlive(request, responseObserver);
+        Status status = Status.newBuilder()
+                .setStatus(true)
+                .build();
+        responseObserver.onNext(status);
+        responseObserver.onCompleted();
     }
 
 }
