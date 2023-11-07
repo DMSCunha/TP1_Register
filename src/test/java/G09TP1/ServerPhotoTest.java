@@ -9,16 +9,16 @@ class ServerPhotoTest {
     @Test
     void addServerTest(){
         //novos servers
-        var server = new ServerPhoto();
+        var server1 = new ServerPhoto();
 
         //está vazio
-        assertNull(server.getNextServer());
+        assertNull(server1.getNextServer());
 
         //adicionou um novo
-        server.addNewServer(new ServerAddress("192.168.1.1",5000));
+        server1.addNewServer(new ServerAddress("192.168.1.1",5000));
 
         //ver se percebe que este servidor já foi adicionado
-        assertFalse(server.addNewServer(new ServerAddress("192.168.1.1", 5000)));
+        assertFalse(server1.addNewServer(new ServerAddress("192.168.1.1", 5000)));
     }
 
     @Test
@@ -40,6 +40,28 @@ class ServerPhotoTest {
 
         //se recomeça do inicio
         assertEquals(new ServerAddress("1",1), server.getNextServer());
+    }
+
+    @Test
+    void errorOnServerTest(){
+        var server2 = new ServerPhoto();
+        server2.addNewServer(new ServerAddress("1",1));
+        server2.addNewServer(new ServerAddress("2",1));
+        server2.addNewServer(new ServerAddress("3",1));
+        server2.addNewServer(new ServerAddress("4",1));
+        server2.addNewServer(new ServerAddress("5",1));
+
+        server2.errorOnServer(new ServerAddress("1",1));
+        server2.errorOnServer(new ServerAddress("1",1));
+        server2.errorOnServer(new ServerAddress("1",1));
+
+        var nextServer = server2.getNextServer();
+        assertNotEquals(new ServerAddress("1", 1), nextServer);
+        assertEquals(new ServerAddress("2",1),nextServer);
+
+        server2.errorOnServer(new ServerAddress("3",1));
+        nextServer = server2.getNextServer();
+        assertEquals(new ServerAddress("3",1), nextServer);
     }
 
 }

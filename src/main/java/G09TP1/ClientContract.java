@@ -6,12 +6,16 @@ import registerclientstub.Address;
 import registerclientstub.RegisterClientGrpc;
 import registerclientstub.Void;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
 
-    public final ServerPhoto server;
+    private final ServerPhoto server;
+    private final ReentrantLock lock;
 
-    public ClientContract(ServerPhoto server){
+    public ClientContract(ServerPhoto server, ReentrantLock lock){
         this.server = server;
+        this.lock = lock;
     }
 
     //case 1
@@ -23,12 +27,13 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
     public void getIP(Void request, StreamObserver<Address> responseObserver) {
 
         //sincronizar aqui
-        /************************************/
+        lock.lock();
 
         //obter o endereço do próximo servidor a enviar
         ServerAddress serverAddress = server.getNextServer();
 
-        /**********************************/
+        //libertar
+        lock.unlock();
 
         if(serverAddress == null){
             responseObserver.onError(new Throwable("Sorry, no service servers ON, try again later..."));
@@ -48,7 +53,7 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
     public void errorGetAnotherIP(Address request, StreamObserver<Address> responseObserver) {
 
         //sincronizar aqui
-        /************************************/
+        lock.lock();
 
         //guardar ip e porto recebido
         ///tratar do server com erro
@@ -57,8 +62,8 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
         //obter outro endereço de um servidor
         ServerAddress serverAddress = server.getNextServer();
 
-        /************************************/
-
+        //libertar
+        lock.unlock();
 
         if(serverAddress == null){
             responseObserver.onError(new Throwable("Sorry, no service servers ON, try again later..."));

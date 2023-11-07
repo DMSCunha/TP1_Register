@@ -5,41 +5,35 @@ import java.util.ArrayList;
 
 public class ServerPhoto {
 
-    private static final ArrayList<ServerAddress> server = new ArrayList<>();
-    private static final ArrayList<Integer> errormessages = new ArrayList<>();
-
-    private static int index = 0;
+    private final ArrayList<ServerAddress> server = new ArrayList<>();
+    private final ArrayList<Integer> errormessages = new ArrayList<>();
+    //private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private int index = 0;
     private static final int REMOVESERVER = 3;
 
     public ServerPhoto(){
-
     }
 
-    public boolean errorOnServer(ServerAddress address){
+    public void errorOnServer(ServerAddress address){
         if(server.contains(address)){
 
             int errors = errormessages.get(server.indexOf(address));
 
             //se é o terceiro erro -> remover
             if(++errors == REMOVESERVER){
-                return removeServer(address);
+                removeServer(address);
+                return ;
             }
 
             // se nao, substituir o numero de erros reportados
             errormessages.set(server.indexOf(address),errors);
-            return true;
         }
-        return false;
     }
 
     //remove o servidor e o numero de erros comunicados
-    private boolean removeServer(ServerAddress address){
-        if(server.contains(address)){
-            errormessages.remove(server.indexOf(address));
-            server.remove(address);
-            return true;
-        }
-        return false;
+    private void removeServer(ServerAddress address){
+        errormessages.remove(server.indexOf(address));
+        server.remove(address);
     }
 
     //adiciona um novo servidor
@@ -59,6 +53,14 @@ public class ServerPhoto {
         if(server.size()==index)
             index = 0;
         return server.get(index++);
+    }
+
+    public void printAllServer(){
+        int i=0;
+        for (ServerAddress aux: server){
+            System.out.println("["+ i +"] - IP: "+aux.getIp()+" Port: "+aux.getPort());
+            System.out.println("["+ i +"] - Erros: "+ errormessages.get(i++));
+        }
     }
 
 }
