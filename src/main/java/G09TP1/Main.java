@@ -8,11 +8,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
 
-    protected static int svcPort = 8500;
+    private final static int svcPort = 8500;
 
     public static void main(String[] args) {
         try {
             ServerPhoto serverPhoto = new ServerPhoto();
+
+            //serverPhoto.addNewServer(new ServerAddress("1",1));
+            //serverPhoto.addNewServer(new ServerAddress("2",2));
+            //serverPhoto.addNewServer(new ServerAddress("3",3));
+
             ReentrantLock lock = new ReentrantLock();
             io.grpc.Server svc = ServerBuilder
                     .forPort(svcPort)
