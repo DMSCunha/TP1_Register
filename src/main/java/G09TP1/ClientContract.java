@@ -47,7 +47,7 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
                 .build();
 
         //debug
-        System.out.println("Sending IP: "+serverAddress.getIp()+"\nPort: "+serverAddress.getPort()+"\nTo...");
+        System.out.println("Sending address to client: "+serverAddress.getIp()+":"+serverAddress.getPort());
 
         //enviar a resposta
         responseObserver.onNext(address);
@@ -62,7 +62,7 @@ public class ClientContract extends RegisterClientGrpc.RegisterClientImplBase {
     @Override
     public void errorIP(Address request, StreamObserver<Void> responseObserver) {
         //debug
-        System.out.println("Recieve error on\n\tIP: "+request.getIp()+"\n\tPort: "+request.getPort());
+        System.out.println("Receive error on address: "+request.getIp()+":"+request.getPort());
 
         //sincronizar aqui
         lock.lock();

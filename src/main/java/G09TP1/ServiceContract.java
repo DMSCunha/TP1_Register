@@ -42,6 +42,9 @@ public class ServiceContract extends RegisterServiceGrpc.RegisterServiceImplBase
             return ;
         }
 
+        //debug
+        System.out.println("Server added: " + address.getIp()+":"+address.getPort());
+
         //construir a resposta
         Ack ack = Ack.newBuilder()
                 .setAck(true)
