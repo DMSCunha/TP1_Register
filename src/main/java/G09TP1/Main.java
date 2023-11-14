@@ -23,9 +23,6 @@ public class Main {
             svc.start();
             System.out.println("Server started, listening on " + svcPort);
 
-            Scanner scan = new Scanner(System.in);
-            while(!scan.nextLine().isBlank())
-                serverPhoto.printAllServer();
 
             svc.awaitTermination();
             svc.shutdown();
